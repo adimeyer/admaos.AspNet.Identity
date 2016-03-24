@@ -10,6 +10,7 @@ using Raven.Client;
 using Raven.Client.Embedded;
 using Raven.Client.Exceptions;
 using Raven.Client.UniqueConstraints;
+// ReSharper disable AccessToDisposedClosure
 
 namespace admaos.AspNet.Identity.RavenDB.Tests
 {
@@ -70,6 +71,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         [Test]
         public void UserStore_SessionParameterNull_Throws()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws(typeof(ArgumentNullException), () => new UserStore<IdentityUser>(null));
         }
 
@@ -80,6 +82,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
             {
                 using (var sess = store.OpenAsyncSession())
                 {
+                    // ReSharper disable once ObjectCreationAsStatement
                     Assert.Throws(typeof (InvalidOperationException), () => new UserStore<IdentityUser>(sess));
                 }
             }
@@ -1000,8 +1003,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         [Test]
         public async Task GetEmailConfirmedAsync_GetEmailConfirmed_ReturnsTrue()
         {
-            var usr = new IdentityUser { UserName = "GetEmailConfirmedAsync_GetEmailConfirmed_ReturnsTrue" };
-            usr.EmailConfirmed = true;
+            var usr = new IdentityUser { UserName = "GetEmailConfirmedAsync_GetEmailConfirmed_ReturnsTrue", EmailConfirmed = true };
             bool res;
 
             using (var userStore = GetNewUserStore())
