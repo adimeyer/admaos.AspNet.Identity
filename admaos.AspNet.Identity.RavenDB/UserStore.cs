@@ -62,7 +62,7 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(session));
             }
-            if (session.Advanced.DocumentStore.Listeners.StoreListeners.All(x => x.GetType() != typeof (UniqueConstraintsStoreListener)))
+            if (session.Advanced.DocumentStore.Listeners.StoreListeners.All(sl => sl.GetType() != typeof (UniqueConstraintsStoreListener)))
             {
                 throw new InvalidOperationException("UniqueConstraintStoreListener has not been registered");
             }
@@ -87,9 +87,9 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (DisposeSession && disposing && Session != null)
+            if (DisposeSession && disposing)
             {
-                Session.Dispose();
+                Session?.Dispose();
             }
             _disposed = true;
             Session = null;
@@ -117,7 +117,7 @@ namespace admaos.AspNet.Identity.RavenDB
             }
         }
 
-        // IUserStore
+        #region IUserStore
 
         /// <summary>
         /// Insert a new user
@@ -186,8 +186,8 @@ namespace admaos.AspNet.Identity.RavenDB
             var userLookup =
                 await
                     Session.Query<TUser>()
-                        .Where(x => x.UserName == userName)
-                        .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                        .Where(u => u.UserName == userName)
+                        .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite())
                         .ToListAsync()
                         .ConfigureAwait(false);
 
@@ -197,10 +197,12 @@ namespace admaos.AspNet.Identity.RavenDB
                 throw new NonUniqueObjectException("More than one user found with same userName");
             }
 
-            return userLookup.FirstOrDefault();
+            return userLookup.SingleOrDefault();
         }
 
-        // IUserPasswordStore
+        #endregion
+
+        #region IUserPasswordStore
 
         /// <summary>
         /// Set the user password hash
@@ -239,11 +241,15 @@ namespace admaos.AspNet.Identity.RavenDB
         {
             ThrowIfDisposed();
             if (user == null)
+            { 
                 throw new ArgumentNullException(nameof(user));
-            return Task.FromResult(!string.IsNullOrWhiteSpace(user.PasswordHash));
+            }
+            return Task.FromResult(user.PasswordHash != null);
         }
 
-        //IUserLoginStore
+        #endregion
+
+        #region IUserLoginStore
 
         /// <summary>
         /// Adds a user login with the specified provider and key
@@ -253,12 +259,14 @@ namespace admaos.AspNet.Identity.RavenDB
         {
             ThrowIfDisposed();
             if (user == null)
+            {
                 throw new ArgumentNullException(nameof(user));
-
+            }
             if (login == null)
+            { 
                 throw new ArgumentNullException(nameof(user));
-
-            if (!user.Logins.Any(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey))
+            }
+            if (!user.Logins.Any(l => l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey))
             {
                 user.Logins.Add(login);
             }
@@ -274,12 +282,14 @@ namespace admaos.AspNet.Identity.RavenDB
         {
             ThrowIfDisposed();
             if (user == null)
+            {
                 throw new ArgumentNullException(nameof(user));
-
+            }
             if (login == null)
+            {
                 throw new ArgumentNullException(nameof(user));
-
-            user.Logins.RemoveAll(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+            }
+            user.Logins.RemoveAll(l => l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey);
 
             return Task.FromResult(0);
         }
@@ -292,8 +302,9 @@ namespace admaos.AspNet.Identity.RavenDB
         {
             ThrowIfDisposed();
             if (user == null)
+            { 
                 throw new ArgumentNullException(nameof(user));
-
+            }
             return Task.FromResult<IList<UserLoginInfo>>(user.Logins);
         }
 
@@ -309,8 +320,8 @@ namespace admaos.AspNet.Identity.RavenDB
             }
             var userLookup = await Session.Query<TUser>()
                 .Where(
-                    x => x.Logins.Any(y => y.LoginProvider == login.LoginProvider && y.ProviderKey == login.ProviderKey))
-                .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                    u => u.Logins.Any(l => l.LoginProvider == login.LoginProvider && l.ProviderKey == login.ProviderKey))
+                .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite())
                 .ToListAsync().ConfigureAwait(false);
 
             //TODO: remove as soon as uniqueness is enforced
@@ -319,10 +330,12 @@ namespace admaos.AspNet.Identity.RavenDB
                 throw new NonUniqueObjectException("More than one userLogin found with same LoginProvider && ProviderKey");
             }
 
-            return userLookup.FirstOrDefault();
+            return userLookup.SingleOrDefault();
         }
 
-        // IClaimStore
+        #endregion
+
+        #region IClaimStore
 
         public Task<IList<Claim>> GetClaimsAsync(TUser user)
         {
@@ -346,7 +359,7 @@ namespace admaos.AspNet.Identity.RavenDB
                 throw new ArgumentNullException(nameof(claim));
             }
 
-            if (!user.Claims.Any(x => x.Type == claim.Type && x.Value == claim.Value))
+            if (!user.Claims.Any(uc => uc.Type == claim.Type && uc.Value == claim.Value))
             {
                 user.Claims.Add(new IdentityUserClaim
                 {
@@ -369,11 +382,13 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(claim));
             }
-            user.Claims.RemoveAll(x => x.Type == claim.Type && x.Value == claim.Value);
+            user.Claims.RemoveAll(uc => uc.Type == claim.Type && uc.Value == claim.Value);
             return Task.FromResult(0);
         }
 
-        // IUserRoleStore
+        #endregion
+
+        #region IUserRoleStore
 
         /// <summary>
         /// Adds a user to a role
@@ -391,7 +406,7 @@ namespace admaos.AspNet.Identity.RavenDB
                 throw new ArgumentNullException(nameof(roleName));
             }
 
-            if (user.Roles.All(x => x != roleName))
+            if (user.Roles.All(r => r != roleName))
             {
                 user.Roles.Add(roleName);
             }
@@ -414,7 +429,7 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(roleName));
             }
-            user.Roles.RemoveAll(x => x == roleName);
+            user.Roles.RemoveAll(r => r == roleName);
             return Task.FromResult(0);
         }
 
@@ -451,7 +466,9 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult(user.Roles.Contains(roleName));
         }
 
-        // IUserSecurityStampStore
+        #endregion
+
+        #region IUserSecurityStampStore
 
         /// <summary>
         /// Set the security stamp for the user
@@ -486,7 +503,9 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult(user.SecurityStamp);
         }
 
-        // IUserEmailStore
+        #endregion
+
+        #region IUserEmailStore
 
         /// <summary>
         /// Set the user email
@@ -563,7 +582,7 @@ namespace admaos.AspNet.Identity.RavenDB
                 await
                     Session.Query<TUser>()
                         .Where(u => u.Email == email)
-                        .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                        .Customize(c => c.WaitForNonStaleResultsAsOfLastWrite())
                         .ToListAsync()
                         .ConfigureAwait(false);
 
@@ -573,10 +592,12 @@ namespace admaos.AspNet.Identity.RavenDB
                 throw new NonUniqueObjectException("More than one user found with the same emailAddress");
             }
 
-            return userLookup.FirstOrDefault();
+            return userLookup.SingleOrDefault();
         }
 
-        // IUserLockoutStore
+        #endregion
+
+        #region IUserLockoutStore
 
         /// <summary>
         /// Returns the DateTimeOffset that represents the end of a user's lockout, any time in the past should be considered
@@ -626,17 +647,14 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            await Session.Advanced.DocumentStore.AsyncDatabaseCommands.ForDatabase(((InMemoryDocumentSessionOperations) Session).DatabaseName).PatchAsync(
-                        Session.Advanced.GetDocumentId(user),
-                        new[]
-                        {
-                            new PatchRequest
-                            {
-                                Type = PatchCommandType.Inc,
-                                Name = nameof(user.AccessFailedCount),
-                                Value = new RavenJValue(1)
-                            }
-                        }).ConfigureAwait(false);
+            var patchRequestInc = new PatchRequest
+            {
+                Type = PatchCommandType.Inc,
+                Name = nameof(user.AccessFailedCount),
+                Value = new RavenJValue(1)
+            };
+            await Session.Advanced.DocumentStore.AsyncDatabaseCommands.ForDatabase(((InMemoryDocumentSessionOperations) Session).DatabaseName)
+                .PatchAsync(Session.Advanced.GetDocumentId(user), new[]{patchRequestInc}).ConfigureAwait(false);
             await Session.Advanced.RefreshAsync(user).ConfigureAwait(false);
             return user.AccessFailedCount;
         }
@@ -701,7 +719,9 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult(0);
         }
 
-        // IUserTwoFactorStore
+        #endregion
+
+        #region IUserTwoFactorStore
 
         /// <summary>
         /// Sets whether two factor authentication is enabled for the user
@@ -732,7 +752,9 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult(user.TwoFactorEnabled);
         }
 
-        // IUserPhoneNumberStore
+        #endregion
+
+        #region IUserPhoneNumberStore
 
         /// <summary>
         /// Set the user's phone number
@@ -795,5 +817,7 @@ namespace admaos.AspNet.Identity.RavenDB
             user.PhoneNumberConfirmed = confirmed;
             return Task.FromResult(0);
         }
+
+        #endregion
     }
 }
