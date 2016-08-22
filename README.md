@@ -1,4 +1,4 @@
-﻿# admaos.AspNet.Identity.RavenDB
+# admaos.AspNet.Identity.RavenDB
 
 ### RavenDB implementation of AspNet.Identity
 
