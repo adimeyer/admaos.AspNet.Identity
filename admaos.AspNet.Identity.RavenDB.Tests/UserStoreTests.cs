@@ -339,34 +339,6 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         }
 
         [Test]
-        public async Task HasPasswordAsync_HasEmptyPasswordHash_ReturnsFalse()
-        {
-            var usr = new IdentityUser { UserName = "GetPasswordHashAsync_GetPasswordHash_ReturnsPassword", PasswordHash = ""};
-            bool result;
-
-            using (var userStore = GetNewUserStore())
-            {
-                result = await userStore.HasPasswordAsync(usr);
-            }
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
-        public async Task HasPasswordAsync_HasWhiteSpacePasswordHash_ReturnsFalse()
-        {
-            var usr = new IdentityUser { UserName = "GetPasswordHashAsync_GetPasswordHash_ReturnsPassword", PasswordHash = "   " };
-            bool result;
-
-            using (var userStore = GetNewUserStore())
-            {
-                result = await userStore.HasPasswordAsync(usr);
-            }
-
-            Assert.IsFalse(result);
-        }
-
-        [Test]
         public async Task AddLoginAsync_UserParameterNull_Throws()
         {
             var login = new UserLoginInfo("loginProvider", "providerKey");
@@ -545,8 +517,8 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         public async Task GetClaimsAsync_GetClaims_ReturnsClaims()
         {
             var usr = new IdentityUser { UserName = "GetClaimsAsync_GetClaims_ReturnsClaims" };
-            var claim1 = new IdentityUserClaim { Type = "ClaimType1", Value = "ClaimValue1" };
-            var claim2 = new IdentityUserClaim { Type = "ClaimType2", Value = "ClaimValue2" };
+            var claim1 = new Claim("ClaimType1", "ClaimValue1");
+            var claim2 = new Claim("ClaimType2", "ClaimValue2");
             usr.Claims.Add(claim1);
             usr.Claims.Add(claim2);
             IList<Claim> claimResult;
@@ -619,7 +591,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         public async Task RemoveClaimAsync_RemoveClaim_IsSuccessful()
         {
             var usr = new IdentityUser { UserName = "RemoveLoginAsync_RemoveLogin_IsSuccessful" };
-            var claim = new IdentityUserClaim { Type = "ClaimType", Value = "ClaimValue" };
+            var claim = new Claim("ClaimType", "ClaimValue");
             usr.Claims.Add(claim);
 
             using (var userStore = GetNewUserStore())

@@ -29,7 +29,7 @@ A fully async RavenDB implementation of AspNet.Identity
 
             public static IAsyncDocumentSession Create()
             {
-                //Below code is just to showcase the functionality, please don't use this in production (e.g. use dependency injection instead)
+                //Below code is just to showcase the functionality, please don't use this in production (i.e. use your favorite IoC container instead)
                 var st = new DocumentStore { Url = "http://localhost:8080" };
                 st.RegisterListener(new UniqueConstraintsStoreListener());
                 st.DefaultDatabase = "YourDatabase";

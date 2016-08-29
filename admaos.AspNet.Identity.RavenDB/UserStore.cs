@@ -344,7 +344,7 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            return Task.FromResult<IList<Claim>>(user.Claims.Select(c => new Claim(c.Type, c.Value)).ToList());
+            return Task.FromResult<IList<Claim>>(user.Claims);
         }
 
         public Task AddClaimAsync(TUser user, Claim claim)
@@ -361,11 +361,7 @@ namespace admaos.AspNet.Identity.RavenDB
 
             if (!user.Claims.Any(uc => uc.Type == claim.Type && uc.Value == claim.Value))
             {
-                user.Claims.Add(new IdentityUserClaim
-                {
-                    Type = claim.Type,
-                    Value = claim.Value
-                });
+                user.Claims.Add(claim);
             }
 
             return Task.FromResult(0);

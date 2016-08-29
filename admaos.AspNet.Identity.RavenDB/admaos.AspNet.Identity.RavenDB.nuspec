@@ -8,10 +8,8 @@
     <owners>$author$</owners>
     <licenseUrl>https://en.wikipedia.org/wiki/MIT_License</licenseUrl>
     <projectUrl>https://github.com/adimeyer/admaos.AspNet.Identity</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial release</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>RavenDB AspNet.Identity</tags>
   </metadata>
