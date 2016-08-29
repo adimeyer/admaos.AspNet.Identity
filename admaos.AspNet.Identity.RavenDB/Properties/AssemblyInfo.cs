@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("admaos.AspNet.Identity.RavenDB")]
-[assembly: AssemblyDescription("RavenDB implementation of AspNet.Identity")]
+[assembly: AssemblyDescription("A fully async RavenDB implementation of AspNet.Identity")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("admaos GmbH")]
 [assembly: AssemblyProduct("admaos.AspNet.Identity.RavenDB")]

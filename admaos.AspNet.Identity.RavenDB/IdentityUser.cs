@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Raven.Client.UniqueConstraints;
 
@@ -20,7 +21,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// </summary>
         public IdentityUser()
         {
-            Claims = new List<IdentityUserClaim>();
+            Claims = new List<Claim>();
             Roles = new List<string>();
             Logins = new List<UserLoginInfo>();
         }
@@ -96,7 +97,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <summary>
         ///     User claims
         /// </summary>
-        public List<IdentityUserClaim> Claims { get; private set; }
+        public List<Claim> Claims { get; protected set; }
 
         /// <summary>
         ///     Logins (facebook, twitter, etc)
