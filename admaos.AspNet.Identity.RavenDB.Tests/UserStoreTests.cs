@@ -198,6 +198,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         public async Task FindByIdAsync_FindUser_IsSuccessful()
         {
             var usr1 = new IdentityUser { UserName = "FindByIdAsync_FindUser_IsSuccessful" };
+            usr1.Claims.Add(new Claim("test", "test"));
             IdentityUser usr2;
 
             using (var sess = _store.OpenAsyncSession())
