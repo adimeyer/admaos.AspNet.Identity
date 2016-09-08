@@ -10,6 +10,7 @@ using Raven.Client;
 using Raven.Client.Embedded;
 using Raven.Client.Exceptions;
 using Raven.Client.UniqueConstraints;
+
 // ReSharper disable AccessToDisposedClosure
 
 namespace admaos.AspNet.Identity.RavenDB.Tests
@@ -67,6 +68,118 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         //        Assert.Throws<ObjectDisposedException>(() => userStore.ThrowIfDisposed());
         //    }
         //}
+
+        // Test ensures that the identity user can be saved to and read from RavenDb
+        // Added this test after noticing an issue with classes that have more than one non-default constructor (System.Security.Claims.Claim)
+        [Test]
+        public async Task UserStore_SaveAndLoadIdentityUserInRavenDb_IsSuccessful()
+        {
+            var email = "UserStore_SaveAndLoadIdentityUserInRavenDb_IsSuccessful@admaos.ch";
+            var emailConfirmed = true;
+            var passwordHash = "aa0030489opja-sdölf0'p928u";
+            var securityStamp = "a09ui3lkjer09yudfla";
+            var phoneNumber = "+41 41 123 45 67";
+            var phoneNumberConfirmed = true;
+            var twoFactorEnabled = true;
+            var lockoutEndDateUtc = new DateTime(2016, 9, 6);
+            var lockoutEnabled = true;
+            var accessFailedCount = 1;
+            var roles = new List<string> {"admin", "accountant"};
+            var claims = new List<Claim> {new Claim("test1", "test2")};
+            var logins = new List<UserLoginInfo> {new UserLoginInfo("loginProvider1", "providerKey1")};
+            var userName = email;
+
+            var usr1 = new IdentityUser
+            {
+                Email = email,
+                EmailConfirmed = emailConfirmed,
+                PasswordHash = passwordHash,
+                SecurityStamp = securityStamp,
+                PhoneNumber = phoneNumber,
+                PhoneNumberConfirmed = phoneNumberConfirmed,
+                TwoFactorEnabled = twoFactorEnabled,
+                LockoutEndDateUtc = lockoutEndDateUtc,
+                LockoutEnabled = lockoutEnabled,
+                AccessFailedCount = accessFailedCount,
+                Roles = roles,
+                Claims = claims,
+                Logins = logins,
+                UserName = userName
+            };
+
+            _store.Conventions.CustomizeJsonSerializer +=
+                serializer => serializer.Converters.Add(new ClaimJsonConverter());
+
+            using (var sess = _store.OpenAsyncSession())
+            {
+                await sess.StoreAsync(usr1).ConfigureAwait(false);
+                await sess.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            IdentityUser usr2;
+            using (var sess = _store.OpenAsyncSession())
+            {
+                usr2 = await sess.LoadAsync<IdentityUser>(usr1.Id).ConfigureAwait(false);
+            }
+
+            Assert.AreEqual(usr1.Id, usr2.Id);
+
+            Assert.AreEqual(email, usr1.Email);
+            Assert.AreEqual(email, usr2.Email);
+
+            Assert.AreEqual(emailConfirmed, usr1.EmailConfirmed);
+            Assert.AreEqual(emailConfirmed, usr2.EmailConfirmed);
+
+            Assert.AreEqual(passwordHash, usr1.PasswordHash);
+            Assert.AreEqual(passwordHash, usr2.PasswordHash);
+
+            Assert.AreEqual(securityStamp, usr1.SecurityStamp);
+            Assert.AreEqual(securityStamp, usr2.SecurityStamp);
+
+            Assert.AreEqual(phoneNumber, usr1.PhoneNumber);
+            Assert.AreEqual(phoneNumber, usr2.PhoneNumber);
+
+            Assert.AreEqual(phoneNumberConfirmed, usr1.PhoneNumberConfirmed);
+            Assert.AreEqual(phoneNumberConfirmed, usr2.PhoneNumberConfirmed);
+
+            Assert.AreEqual(twoFactorEnabled, usr1.TwoFactorEnabled);
+            Assert.AreEqual(twoFactorEnabled, usr2.TwoFactorEnabled);
+
+            Assert.AreEqual(lockoutEndDateUtc, usr1.LockoutEndDateUtc);
+            Assert.AreEqual(lockoutEndDateUtc, usr2.LockoutEndDateUtc);
+
+            Assert.AreEqual(lockoutEnabled, usr1.LockoutEnabled);
+            Assert.AreEqual(lockoutEnabled, usr2.LockoutEnabled);
+
+            Assert.AreEqual(accessFailedCount, usr1.AccessFailedCount);
+            Assert.AreEqual(accessFailedCount, usr2.AccessFailedCount);
+
+            Assert.AreEqual(roles, usr1.Roles);
+            Assert.AreEqual(roles, usr2.Roles);
+
+            Assert.AreEqual(claims.Count, usr1.Claims.Count);
+            Assert.AreEqual(claims.Count, usr2.Claims.Count);
+            for (int i = 0; i < claims.Count; i++)
+            {
+                Assert.AreEqual(claims[i].Type, usr1.Claims[i].Type);
+                Assert.AreEqual(claims[i].Type, usr2.Claims[i].Type);
+                Assert.AreEqual(claims[i].Value, usr1.Claims[i].Value);
+                Assert.AreEqual(claims[i].Value, usr2.Claims[i].Value);
+            }
+
+            Assert.AreEqual(logins.Count, usr1.Logins.Count);
+            Assert.AreEqual(logins.Count, usr2.Logins.Count);
+            for (int i = 0; i < claims.Count; i++)
+            {
+                Assert.AreEqual(logins[i].LoginProvider, usr1.Logins[i].LoginProvider);
+                Assert.AreEqual(logins[i].LoginProvider, usr2.Logins[i].LoginProvider);
+                Assert.AreEqual(logins[i].ProviderKey, usr1.Logins[i].ProviderKey);
+                Assert.AreEqual(logins[i].ProviderKey, usr2.Logins[i].ProviderKey);
+            }
+
+            Assert.AreEqual(userName, usr1.UserName);
+            Assert.AreEqual(userName, usr2.UserName);
+        }
 
         [Test]
         public void UserStore_SessionParameterNull_Throws()

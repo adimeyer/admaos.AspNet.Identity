@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Raven.Imports.Newtonsoft.Json;
 using Raven.Imports.Newtonsoft.Json.Linq;
 
@@ -51,5 +52,19 @@ namespace admaos.AspNet.Identity.RavenDB
 
             return target;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <param name="serializer"></param>
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            //We don't deal with writing json, generally newtonsoft would make a good job of
+            //serializing these type of objects without having to use a custom writer anyway
+        }
+
+        public override bool CanWrite => false;
     }
 }

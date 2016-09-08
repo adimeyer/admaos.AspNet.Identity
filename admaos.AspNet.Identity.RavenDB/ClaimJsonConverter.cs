@@ -13,11 +13,6 @@ namespace admaos.AspNet.Identity.RavenDB
     /// </summary>
     public class ClaimJsonConverter : ObjectsWithMultipleConstructorsJsonConverter<Claim>
     {
-        public ClaimJsonConverter()
-        {
-            
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -26,18 +21,6 @@ namespace admaos.AspNet.Identity.RavenDB
         protected override Claim Create(JObject jObject)
         {
             return new Claim(jObject[nameof(Claim.Type)].ToString(), jObject[nameof(Claim.Value)].ToString());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="value"></param>
-        /// <param name="serializer"></param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            //We don't deal with writing json, generally newtonsoft would make a good job of
-            //serializing these type of objects without having to use a custom writer anyway
         }
     }
 }
