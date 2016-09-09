@@ -49,7 +49,7 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
         [SetUp]
         public void SetUp()
         {
-            _store = NewDocumentStore();
+            _store = NewDocumentStore(noStaleQueries: true);
             ((EmbeddableDocumentStore) _store).RegisterListener(new UniqueConstraintsStoreListener());
         }
 
