@@ -66,7 +66,7 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new InvalidOperationException("UniqueConstraintStoreListener has not been registered");
             }
-            // TODO: Check with Lukas if this is the best approach to prevent multiple instances of the converter from being registered
+
             session.Advanced.DocumentStore.Conventions.CustomizeJsonSerializer += serializer =>
             {
                 if (serializer.Converters.All(c => c.GetType() != typeof(ClaimJsonConverter)))
