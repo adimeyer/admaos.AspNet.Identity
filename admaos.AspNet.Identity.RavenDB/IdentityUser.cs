@@ -92,17 +92,17 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <summary>
         ///     User roles
         /// </summary>
-        public List<string> Roles { get; private set; }
+        public List<string> Roles { get; set; }
 
         /// <summary>
         ///     User claims
         /// </summary>
-        public List<Claim> Claims { get; protected set; }
+        public virtual List<Claim> Claims { get; set; }
 
         /// <summary>
         ///     Logins (facebook, twitter, etc)
         /// </summary>
-        public List<UserLoginInfo> Logins { get; private set; }
+        public List<UserLoginInfo> Logins { get; set; }
 
         /// <summary>
         ///     User ID (unique id)

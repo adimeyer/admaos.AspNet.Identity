@@ -62,10 +62,19 @@ namespace admaos.AspNet.Identity.RavenDB
             {
                 throw new ArgumentNullException(nameof(session));
             }
-            if (session.Advanced.DocumentStore.Listeners.StoreListeners.All(sl => sl.GetType() != typeof (UniqueConstraintsStoreListener)))
+            if (session.Advanced.DocumentStore.Listeners.StoreListeners.All(sl => sl.GetType() != typeof(UniqueConstraintsStoreListener)))
             {
                 throw new InvalidOperationException("UniqueConstraintStoreListener has not been registered");
             }
+
+            session.Advanced.DocumentStore.Conventions.CustomizeJsonSerializer += serializer =>
+            {
+                if (serializer.Converters.All(c => c.GetType() != typeof(ClaimJsonConverter)))
+                {
+                    serializer.Converters.Add(new ClaimJsonConverter());
+                }
+            };
+
             //TODO: Check for Unique Constraint Bundle on Server
             DisposeSession = true;
             Session = session;
