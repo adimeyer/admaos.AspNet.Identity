@@ -179,7 +179,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Finds a user
         /// </summary>
         /// <param name="userId"/>
-        public virtual async Task<TUser> FindByIdAsync(string userId)
+        public async Task<TUser> FindByIdAsync(string userId)
         {
             ThrowIfDisposed();
             return await Session.LoadAsync<TUser>(userId).ConfigureAwait(false);
@@ -189,7 +189,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Find a user by name
         /// </summary>
         /// <param name="userName"/>
-        public virtual async Task<TUser> FindByNameAsync(string userName)
+        public async Task<TUser> FindByNameAsync(string userName)
         {
             ThrowIfDisposed();
             var userLookup =

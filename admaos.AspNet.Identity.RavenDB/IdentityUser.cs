@@ -97,7 +97,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <summary>
         ///     User claims
         /// </summary>
-        public virtual List<Claim> Claims { get; set; }
+        public List<Claim> Claims { get; set; }
 
         /// <summary>
         ///     Logins (facebook, twitter, etc)
