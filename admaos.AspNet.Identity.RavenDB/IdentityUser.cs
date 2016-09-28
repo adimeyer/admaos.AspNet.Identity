@@ -17,28 +17,6 @@ namespace admaos.AspNet.Identity.RavenDB
     public class IdentityUser : IUser
     {
         /// <summary>
-        ///     Constructor
-        /// </summary>
-        public IdentityUser()
-        {
-            Claims = new List<Claim>();
-            Roles = new List<string>();
-            Logins = new List<UserLoginInfo>();
-        }
-
-        /// <summary>
-        ///     Constructor that takes an id and a userName
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="userName"></param>
-        public IdentityUser(string id, string userName)
-            : this()
-        {
-            Id = id;
-            UserName = userName;
-        }
-
-        /// <summary>
         ///     Email
         /// </summary>
         [UniqueConstraint]
@@ -92,17 +70,17 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <summary>
         ///     User roles
         /// </summary>
-        public virtual List<string> Roles { get; set; }
+        public virtual List<string> Roles { get; set; } = new List<string>();
 
         /// <summary>
         ///     User claims
         /// </summary>
-        public virtual List<Claim> Claims { get; set; }
+        public virtual List<Claim> Claims { get; set; } = new List<Claim>();
 
         /// <summary>
         ///     Logins (facebook, twitter, etc)
         /// </summary>
-        public virtual List<UserLoginInfo> Logins { get; set; }
+        public virtual List<UserLoginInfo> Logins { get; set; } = new List<UserLoginInfo>();
 
         /// <summary>
         ///     User ID (unique id)
