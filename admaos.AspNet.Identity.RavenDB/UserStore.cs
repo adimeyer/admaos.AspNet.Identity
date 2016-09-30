@@ -132,7 +132,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Insert a new user
         /// </summary>
         /// <param name="user"/>
-        public async Task CreateAsync(TUser user)
+        public virtual async Task CreateAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -150,7 +150,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <remarks>
         /// This method assumes that incomming TUser parameter is tracked in the session. So, this method literally behaves as SaveChangeAsync
         /// </remarks>
-        public async Task UpdateAsync(TUser user)
+        public virtual async Task UpdateAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -164,7 +164,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Delete a user
         /// </summary>
         /// <param name="user"/>
-        public async Task DeleteAsync(TUser user)
+        public virtual async Task DeleteAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -217,7 +217,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Set the user password hash
         /// </summary>
         /// <param name="user"/><param name="passwordHash"/>
-        public Task SetPasswordHashAsync(TUser user, string passwordHash)
+        public virtual Task SetPasswordHashAsync(TUser user, string passwordHash)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -232,7 +232,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Get the user password hash
         /// </summary>
         /// <param name="user"/>
-        public Task<string> GetPasswordHashAsync(TUser user)
+        public virtual Task<string> GetPasswordHashAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -246,7 +246,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns true if a user has a password set
         /// </summary>
         /// <param name="user"/>
-        public Task<bool> HasPasswordAsync(TUser user)
+        public virtual Task<bool> HasPasswordAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -264,7 +264,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Adds a user login with the specified provider and key
         /// </summary>
         /// <param name="user"/><param name="login"/>
-        public Task AddLoginAsync(TUser user, UserLoginInfo login)
+        public virtual Task AddLoginAsync(TUser user, UserLoginInfo login)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -287,7 +287,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Removes the user login with the specified combination if it exists
         /// </summary>
         /// <param name="user"/><param name="login"/>
-        public Task RemoveLoginAsync(TUser user, UserLoginInfo login)
+        public virtual Task RemoveLoginAsync(TUser user, UserLoginInfo login)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -307,7 +307,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns the linked accounts for this user
         /// </summary>
         /// <param name="user"/>
-        public Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user)
+        public virtual Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -320,7 +320,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// <summary>
         /// Returns the user associated with this login
         /// </summary>
-        public async Task<TUser> FindAsync(UserLoginInfo login)
+        public virtual async Task<TUser> FindAsync(UserLoginInfo login)
         {
             ThrowIfDisposed();
             if (login == null)
@@ -346,7 +346,12 @@ namespace admaos.AspNet.Identity.RavenDB
 
         #region IClaimStore
 
-        public Task<IList<Claim>> GetClaimsAsync(TUser user)
+        /// <summary>
+        ///     Return the claims for a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public virtual Task<IList<Claim>> GetClaimsAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -356,7 +361,13 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult<IList<Claim>>(user.Claims);
         }
 
-        public Task AddClaimAsync(TUser user, Claim claim)
+        /// <summary>
+        ///     Add a claim to a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="claim"></param>
+        /// <returns></returns>
+        public virtual Task AddClaimAsync(TUser user, Claim claim)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -376,7 +387,14 @@ namespace admaos.AspNet.Identity.RavenDB
             return Task.FromResult(0);
         }
 
-        public Task RemoveClaimAsync(TUser user, Claim claim)
+        /// <summary>
+        ///     Remove a claim from a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="claim"></param>
+        /// <returns></returns>
+
+        public virtual Task RemoveClaimAsync(TUser user, Claim claim)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -399,7 +417,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Adds a user to a role
         /// </summary>
         /// <param name="user"/><param name="roleName"/>
-        public Task AddToRoleAsync(TUser user, string roleName)
+        public virtual Task AddToRoleAsync(TUser user, string roleName)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -423,7 +441,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Removes the role for the user
         /// </summary>
         /// <param name="user"/><param name="roleName"/>
-        public Task RemoveFromRoleAsync(TUser user, string roleName)
+        public virtual Task RemoveFromRoleAsync(TUser user, string roleName)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -443,7 +461,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// </summary>
         /// <param name="user"/>
         /// <returns/>
-        public Task<IList<string>> GetRolesAsync(TUser user)
+        public virtual Task<IList<string>> GetRolesAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -457,7 +475,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns true if a user is in the role
         /// </summary>
         /// <param name="user"/><param name="roleName"/>
-        public Task<bool> IsInRoleAsync(TUser user, string roleName)
+        public virtual Task<bool> IsInRoleAsync(TUser user, string roleName)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -479,7 +497,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Set the security stamp for the user
         /// </summary>
         /// <param name="user"/><param name="stamp"/>
-        public Task SetSecurityStampAsync(TUser user, string stamp)
+        public virtual Task SetSecurityStampAsync(TUser user, string stamp)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -498,7 +516,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Get the user security stamp
         /// </summary>
         /// <param name="user"/>
-        public Task<string> GetSecurityStampAsync(TUser user)
+        public virtual Task<string> GetSecurityStampAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -516,7 +534,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Set the user email
         /// </summary>
         /// <param name="user"/><param name="email"/>
-        public Task SetEmailAsync(TUser user, string email)
+        public virtual Task SetEmailAsync(TUser user, string email)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -535,7 +553,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Get the user email
         /// </summary>
         /// <param name="user"/>
-        public Task<string> GetEmailAsync(TUser user)
+        public virtual Task<string> GetEmailAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -549,7 +567,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns true if the user email is confirmed
         /// </summary>
         /// <param name="user"/>
-        public Task<bool> GetEmailConfirmedAsync(TUser user)
+        public virtual Task<bool> GetEmailConfirmedAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -563,7 +581,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Sets whether the user email is confirmed
         /// </summary>
         /// <param name="user"/><param name="confirmed"/>
-        public Task SetEmailConfirmedAsync(TUser user, bool confirmed)
+        public virtual Task SetEmailConfirmedAsync(TUser user, bool confirmed)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -578,7 +596,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns the user associated with this email
         /// </summary>
         /// <param name="email"/>
-        public async Task<TUser> FindByEmailAsync(string email)
+        public virtual async Task<TUser> FindByEmailAsync(string email)
         {
             ThrowIfDisposed();
             if (String.IsNullOrWhiteSpace(email))
@@ -609,7 +627,7 @@ namespace admaos.AspNet.Identity.RavenDB
         ///                 not locked out.
         /// </summary>
         /// <param name="user"/>
-        public Task<DateTimeOffset> GetLockoutEndDateAsync(TUser user)
+        public virtual Task<DateTimeOffset> GetLockoutEndDateAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -626,7 +644,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Locks a user out until the specified end date (set to a past date, to unlock a user)
         /// </summary>
         /// <param name="user"/><param name="lockoutEnd"/>
-        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset lockoutEnd)
+        public virtual Task SetLockoutEndDateAsync(TUser user, DateTimeOffset lockoutEnd)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -645,7 +663,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Used to record when an attempt to access the user has failed
         /// </summary>
         /// <param name="user"/>
-        public async Task<int> IncrementAccessFailedCountAsync(TUser user)
+        public virtual async Task<int> IncrementAccessFailedCountAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -668,7 +686,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Used to reset the access failed count, typically after the account is successfully accessed
         /// </summary>
         /// <param name="user"/>
-        public Task ResetAccessFailedCountAsync(TUser user)
+        public virtual Task ResetAccessFailedCountAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -685,7 +703,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// </summary>
         /// <param name="user"/>
         /// <returns/>
-        public Task<int> GetAccessFailedCountAsync(TUser user)
+        public virtual Task<int> GetAccessFailedCountAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -699,7 +717,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns whether the user can be locked out.
         /// </summary>
         /// <param name="user"/>
-        public Task<bool> GetLockoutEnabledAsync(TUser user)
+        public virtual Task<bool> GetLockoutEnabledAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -713,7 +731,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Sets whether the user can be locked out.
         /// </summary>
         /// <param name="user"/><param name="enabled"/>
-        public Task SetLockoutEnabledAsync(TUser user, bool enabled)
+        public virtual Task SetLockoutEnabledAsync(TUser user, bool enabled)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -732,7 +750,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Sets whether two factor authentication is enabled for the user
         /// </summary>
         /// <param name="user"/><param name="enabled"/>
-        public Task SetTwoFactorEnabledAsync(TUser user, bool enabled)
+        public virtual Task SetTwoFactorEnabledAsync(TUser user, bool enabled)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -747,7 +765,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns whether two factor authentication is enabled for the user
         /// </summary>
         /// <param name="user"/>
-        public Task<bool> GetTwoFactorEnabledAsync(TUser user)
+        public virtual Task<bool> GetTwoFactorEnabledAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -765,7 +783,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Set the user's phone number
         /// </summary>
         /// <param name="user"/><param name="phoneNumber"/>
-        public Task SetPhoneNumberAsync(TUser user, string phoneNumber)
+        public virtual Task SetPhoneNumberAsync(TUser user, string phoneNumber)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -784,7 +802,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Get the user phone number
         /// </summary>
         /// <param name="user"/>
-        public Task<string> GetPhoneNumberAsync(TUser user)
+        public virtual Task<string> GetPhoneNumberAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -798,7 +816,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Returns true if the user phone number is confirmed
         /// </summary>
         /// <param name="user"/>
-        public Task<bool> GetPhoneNumberConfirmedAsync(TUser user)
+        public virtual Task<bool> GetPhoneNumberConfirmedAsync(TUser user)
         {
             ThrowIfDisposed();
             if (user == null)
@@ -812,7 +830,7 @@ namespace admaos.AspNet.Identity.RavenDB
         /// Sets whether the user phone number is confirmed
         /// </summary>
         /// <param name="user"/><param name="confirmed"/>
-        public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed)
+        public virtual Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed)
         {
             ThrowIfDisposed();
             if (user == null)

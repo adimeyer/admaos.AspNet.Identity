@@ -65,6 +65,9 @@ namespace admaos.AspNet.Identity.RavenDB
             //serializing these type of objects without having to use a custom writer anyway
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanWrite => false;
     }
 }
