@@ -1526,5 +1526,31 @@ namespace admaos.AspNet.Identity.RavenDB.Tests
 
             Assert.IsTrue(usr.PhoneNumberConfirmed);
         }
+
+        [Test]
+        public async Task Users_GetAllUsers_ListOfUsers()
+        {
+            var usr1 = new IdentityUser { UserName = "Users_GetAllUsers_ListOfUsers_1" };
+            var usr2 = new IdentityUser { UserName = "Users_GetAllUsers_ListOfUsers_2" };
+            var usr3 = new IdentityUser { UserName = "Users_GetAllUsers_ListOfUsers_3" };
+            var usr4 = new IdentityUser { UserName = "Users_GetAllUsers_ListOfUsers_4" };
+
+            using (var sess = _store.OpenAsyncSession())
+            {
+                await sess.StoreAsync(usr1).ConfigureAwait(false);
+                await sess.StoreAsync(usr2).ConfigureAwait(false);
+                await sess.StoreAsync(usr3).ConfigureAwait(false);
+                await sess.StoreAsync(usr4).ConfigureAwait(false);
+                await sess.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            IList<IdentityUser> users;
+            using (var userStore = GetNewUserStore())
+            {
+                users = await userStore.Users.ToListAsync().ConfigureAwait(false);
+            }
+
+            Assert.AreEqual(users.Count, 4);
+        }
     }
 }
