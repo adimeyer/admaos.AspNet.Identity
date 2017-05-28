@@ -32,7 +32,8 @@ namespace admaos.AspNet.Identity.RavenDB
         IUserEmailStore<TUser>,
         IUserLockoutStore<TUser, string>,
         IUserTwoFactorStore<TUser, string>,
-        IUserPhoneNumberStore<TUser>
+        IUserPhoneNumberStore<TUser>,
+        IQueryableUserStore<TUser>
         where TUser : IdentityUser
     {
         private bool _disposed;
@@ -839,6 +840,18 @@ namespace admaos.AspNet.Identity.RavenDB
             }
             user.PhoneNumberConfirmed = confirmed;
             return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// Gets the IQueryable users
+        /// </summary>
+        public IQueryable<TUser> Users
+        {
+            get
+            {
+                ThrowIfDisposed();
+                return Session.Query<TUser>();
+            }
         }
 
         #endregion
